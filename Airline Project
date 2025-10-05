@@ -1,0 +1,185 @@
+package airline_project;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.StringTokenizer;
+import javax.swing.JOptionPane;
+
+public class airline_project {
+
+    static String[] flightNumbers, originationCities, destinationCities, flightDates, flightTimes;
+    static int[] coachSeats, firstClassSeats;
+    static double[] coachSeatCosts, additionalFirstClassCosts;
+    static int flightCount = 0; 
+
+    public static void main(String[] args) {
+        int selection;
+        
+        start_program();
+        selection = Menu();
+        
+        while (selection != 6) {
+            if (selection == 1)
+                print_all_info();
+            else if (selection == 2)
+                print_specific_flight_info();
+            else if (selection == 3)
+                print_destination();
+            else if (selection == 4)
+                print_total_seats();
+            else if (selection == 5)
+                print_seat_value();
+            
+            selection = Menu();
+        }
+        
+        System.exit(0);
+    }
+
+    public static void start_program() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File("flights.txt")));
+            String line;
+            int index = 0;
+
+            flightNumbers = new String[100];
+            originationCities = new String[100];
+            destinationCities = new String[100];
+            flightDates = new String[100];
+            flightTimes = new String[100];
+            coachSeats = new int[100];
+            firstClassSeats = new int[100];
+            coachSeatCosts = new double[100];
+            additionalFirstClassCosts = new double[100];
+
+            while ((line = reader.readLine()) != null) {
+                StringTokenizer st = new StringTokenizer(line, "#");
+                
+                flightNumbers[index] = st.nextToken();
+                originationCities[index] = st.nextToken();
+                destinationCities[index] = st.nextToken();
+                flightDates[index] = st.nextToken();
+                flightTimes[index] = st.nextToken();
+                coachSeats[index] = Integer.parseInt(st.nextToken());
+                coachSeatCosts[index] = Double.parseDouble(st.nextToken());
+                firstClassSeats[index] = Integer.parseInt(st.nextToken());
+                additionalFirstClassCosts[index] = Double.parseDouble(st.nextToken());
+                
+                index++;
+            }
+            
+            flightCount = index; 
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Error reading from file: " + e.getMessage());
+        }
+    }
+    public static int Menu() {
+        int selection;
+        String value;
+        String words = "Acme Airlines\n" + 
+                       "1. All flight Info\n" + 
+                       "2. Specific Flight Info\n" + 
+                       "3. Flights to specific Destination\n" + 
+                       "4. Total Seats on Flights\n" + 
+                       "5. Value of seats on all flights\n" + 
+                       "6. Exit\n" + 
+                       "Please make your selection:";
+        value = JOptionPane.showInputDialog(null, words, "Input Data", JOptionPane.QUESTION_MESSAGE);
+        selection = Integer.parseInt(value);
+        return selection; }
+    
+    public static void print_all_info() {
+        System.out.println("\nExecuting print_all_info:");
+        for (int i = 0; i < flightCount; i++) {
+            System.out.println("Flight Number: " + flightNumbers[i]);
+            System.out.println("Origination City: " + originationCities[i]);
+            System.out.println("Destination City: " + destinationCities[i]);
+            System.out.println("Flight Date: " + flightDates[i]);
+            System.out.println("Flight Time: " + flightTimes[i]);
+            System.out.println("Coach Seats: " + coachSeats[i]);
+            System.out.println("Cost of Coach Seat: $" + coachSeatCosts[i]);
+            System.out.println("First Class Seats: " + firstClassSeats[i]);
+            System.out.println("Additional Cost for First Class: $" + additionalFirstClassCosts[i]);
+            System.out.println("------------------------------------");
+        }
+    }
+    public static void print_specific_flight_info() {
+        String flightNum = JOptionPane.showInputDialog("Enter the flight number:");
+        boolean found = false;
+        
+        for (int i = 0; i < flightCount; i++) {
+            if (flightNumbers[i].equals(flightNum)) {
+                System.out.println("Flight Number: " + flightNumbers[i]);
+                System.out.println("Origination City: " + originationCities[i]);
+                System.out.println("Destination City: " + destinationCities[i]);
+                System.out.println("Flight Date: " + flightDates[i]);
+                System.out.println("Flight Time: " + flightTimes[i]);
+                System.out.println("Coach Seats: " + coachSeats[i]);
+                System.out.println("Cost of Coach Seat: $" + coachSeatCosts[i]);
+                System.out.println("First Class Seats: " + firstClassSeats[i]);
+                System.out.println("Additional Cost for First Class: $" + additionalFirstClassCosts[i]);
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            System.out.println("Flight number not found.");
+        }
+    }
+
+    public static void print_destination() {
+        String destination = JOptionPane.showInputDialog("Enter the destination city:").trim();
+        boolean found = false;
+        
+        System.out.println("\nFlights to " + destination + ":");
+        for (int i = 0; i < flightCount; i++) {
+            if (destinationCities[i].trim().equalsIgnoreCase(destination)) {
+                System.out.println("Flight Number: " + flightNumbers[i]);
+                System.out.println("Origination City: " + originationCities[i]);
+                System.out.println("Destination City: " + destinationCities[i]);
+                System.out.println("Flight Date: " + flightDates[i]);
+                System.out.println("Flight Time: " + flightTimes[i]);
+                System.out.println("Coach Seats: " + coachSeats[i]);
+                System.out.println("Cost of Coach Seat: $" + coachSeatCosts[i]);
+                System.out.println("First Class Seats: " + firstClassSeats[i]);
+                System.out.println("Additional Cost for First Class: $" + additionalFirstClassCosts[i]);
+                System.out.println("------------------------------------");
+                found = true; }
+        }
+        
+        if (!found) {
+            System.out.println("No flights to the specified destination.");
+        }
+    }
+
+    public static void print_total_seats() {
+        System.out.println("\nExecuting print_total_seats:");
+        for (int i = 0; i < flightCount; i++) {
+            int totalSeats = coachSeats[i] + firstClassSeats[i];
+            System.out.println("Flight Number: " + flightNumbers[i] + 
+                               ", Destination: " + destinationCities[i] + 
+                               ", Total Seats: " + totalSeats);
+        } }
+    public static void print_seat_value() {
+        System.out.println("\nExecuting print_seat_value:");
+        for (int i = 0; i < flightCount; i++) {
+            double coachValue = coachSeats[i] * coachSeatCosts[i];
+            double firstClassValue = firstClassSeats[i] * (coachSeatCosts[i] + additionalFirstClassCosts[i]);
+            double totalValue = coachValue + firstClassValue;
+
+            System.out.println("Flight Number: " + flightNumbers[i]);
+            System.out.println("Origination City: " + originationCities[i]);
+            System.out.println("Destination City: " + destinationCities[i]);
+            System.out.println("Flight Date: " + flightDates[i]);
+            System.out.println("Flight Time: " + flightTimes[i]);
+            System.out.println("Coach Seats Value: $" + coachValue);
+            System.out.println("First Class Seats Value: $" + firstClassValue);
+            System.out.println("Total Value of Seats: $" + totalValue);
+            System.out.println("------------------------------------");
+        }
+    }
+}
